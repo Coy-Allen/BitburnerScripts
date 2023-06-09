@@ -1,0 +1,1 @@
+are modules instanced? aka: can we share variables between two scripts that import a "varable storage" module.

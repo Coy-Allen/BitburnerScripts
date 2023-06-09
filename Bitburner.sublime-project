@@ -1,0 +1,30 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"NetscriptDefinitions.d.ts",
+				".gitignore",
+				"filesync.json",
+				"package-lock.json",
+				"package.json",
+			],
+			"folder_exclude_patterns":
+			[
+				"dist",
+				"build",
+				"node_modules",
+			],
+			"path": "."
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "quickBuild.ps1",
+			"shell": true,
+			"cmd": ["powershell.exe", "$project_path/quickBuild.ps1"],
+		}
+	],
+}
