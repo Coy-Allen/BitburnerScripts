@@ -23,7 +23,7 @@ IDEA: make visable then add another listener that changes its display/visability
 NOPE: cant add listeners before already existing ones. cant repush the event
 */
 
-export function main(_ns: NS) {
+export function main(_ns: NS): void {
 	const element = window.document.getElementById("unclickable");
 	if (element === null) {
 		console.error("unclickable not found.");

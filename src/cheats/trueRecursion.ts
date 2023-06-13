@@ -13,6 +13,6 @@ useEffect(() => {
 need to send the event from within the arcade iframe. for some reason didn't work when tried, both debug and .script
 */
 
-export function main(_ns: NS) {
+export function main(_ns: NS): void {
 	window.postMessage("test");
 }

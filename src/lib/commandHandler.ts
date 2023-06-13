@@ -62,7 +62,7 @@ export class commandHandler {
 				) {return false;}
 				return true;
 			})
-			.map((server)=>{
+			.map((server): [number, Server]=>{
 				const serverCopy = JSON.parse(JSON.stringify(server)) as Server;
 				serverCopy.hackDifficulty = serverCopy.minDifficulty;
 				const estimatePerHack = this.formulas.hacking.hackChance(serverCopy, player)*serverCopy.moneyMax;
@@ -70,7 +70,7 @@ export class commandHandler {
 				const value = estimatePerHack/hacktime;
 				return [value, server] as [number, Server];
 			})
-			.sort((a, b)=>{
+			.sort((a, b): number=>{
 				return a[0]-b[0];
 			});
 		return rankedTargets[0][1];

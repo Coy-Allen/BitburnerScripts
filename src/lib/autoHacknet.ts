@@ -2,7 +2,7 @@ import {Formulas, NS} from "@ns";
 
 // TODO: this was a raw copy paste. might need a rework
 
-export async function checkHacknetNodes(ns: NS, calc: Formulas) {
+export async function checkHacknetNodes(ns: NS, calc: Formulas): Promise<void> {
 	let hasFailed = false;
 	const hn = ns.hacknet;
 	let targetNodes = 12;

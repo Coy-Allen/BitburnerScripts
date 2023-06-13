@@ -24,15 +24,14 @@ function generate(ns: NS): string {
 }
 
 function stringifyData(imports: imports, functions: functions): string {
-	// TODO: stub
-	let result = [...imports.entries()].map(([filename, variables])=>`import {${variables.join(",")}} from ${filename}\n`).join("");
+	let result = [...imports.entries()].map(([filename, variables]): string=>`import {${variables.join(",")}} from ${filename}\n`).join("");
 	result += [...functions.entries()].join("\n");
 	return result;
 }
 
 // alternative generators
 
-function getBitnodeMult(ns: NS, _imports: imports, functions: functions, sourceFiles: SourceFileLvl[]) {
+function getBitnodeMult(ns: NS, _imports: imports, functions: functions, sourceFiles: SourceFileLvl[]): void {
 	let funct = "function getBitnodeMult(ns) {\n\treturn ";
 	if (getSourceLevel(sourceFiles, 5) >= 1) {
 		funct+=`JSON.parse(${JSON.stringify(ns.getBitNodeMultipliers())})`;
@@ -42,7 +41,7 @@ function getBitnodeMult(ns: NS, _imports: imports, functions: functions, sourceF
 	funct+=";\n};";
 	functions.add(funct);
 }
-function getFormulas(ns: NS, imports: imports, functions: functions, sourceFiles: SourceFileLvl[]) {
+function getFormulas(ns: NS, imports: imports, functions: functions, sourceFiles: SourceFileLvl[]): void {
 	let funct = "function getFormulas(ns, bitNodeMults) {\n\treturn ";
 	if (ns.fileExists("formulas.exe") || getSourceLevel(sourceFiles, 5) >= 1) {
 		funct+="ns.formulas";

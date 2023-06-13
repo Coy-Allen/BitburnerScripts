@@ -1,4 +1,4 @@
-import {NS, Formulas, Player} from "@ns";
+import {NS, Formulas, Player, SourceFileLvl} from "@ns";
 import {autoHack} from "/lib/autoHack";
 import {scanning} from "/lib/scanning";
 import {scriptManager} from "/lib/scriptManager";
@@ -15,7 +15,7 @@ export class remoteMasterBase {
 	calc: Formulas;
 	scanning: scanning;
 	commandHandlerRef: commandHandler;
-	constructor(ns: NS, calc: Formulas) {
+	constructor(ns: NS, calc: Formulas, _sourceFiles: SourceFileLvl[]) {
 		this.ns = ns;
 		this.nic = new networking(ns, "remoteMaster");
 		this.ns.clearPort(networking.requestPort);

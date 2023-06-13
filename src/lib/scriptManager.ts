@@ -12,28 +12,28 @@ export class scriptManager {
 	scriptFileRequirements: Record<string, scriptMetadata|undefined> = {
 		"/exec/remoteClientDynamic.js": {
 			requirements: ["/lib/remoteClientBase.js"],
-			args: (hostname)=>{
+			args: (hostname): [number, string]=>{
 				const threads = this.calcMaxThreads("/exec/remoteClientDynamic.js", hostname);
 				return [threads, hostname];
 			},
 		},
 		"/exec/remoteClientGrow.js": {
 			requirements: ["/lib/remoteClientBase.js"],
-			args: (hostname)=>{
+			args: (hostname): [number, string]=>{
 				const threads = this.calcMaxThreads("/exec/remoteClientGrow.js", hostname);
 				return [threads, hostname];
 			},
 		},
 		"/exec/remoteClientHack.js": {
 			requirements: ["/lib/remoteClientBase.js"],
-			args: (hostname)=>{
+			args: (hostname): [number, string]=>{
 				const threads = this.calcMaxThreads("/exec/remoteClientHack.js", hostname);
 				return [threads, hostname];
 			},
 		},
 		"/exec/remoteClientWeaken.js": {
 			requirements: ["/lib/remoteClientBase.js"],
-			args: (hostname)=>{
+			args: (hostname): [number, string]=>{
 				const threads = this.calcMaxThreads("/exec/remoteClientWeaken.js", hostname);
 				return [threads, hostname];
 			},

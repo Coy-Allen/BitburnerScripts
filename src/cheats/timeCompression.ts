@@ -24,6 +24,6 @@ function timeCompression(): void {
 no fuckin clue
 */
 
-export function main(_ns: NS) {
+export function main(_ns: NS): void {
 	// TODO: stub
 }
