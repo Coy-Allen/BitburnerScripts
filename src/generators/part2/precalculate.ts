@@ -1,35 +1,18 @@
 import {NS, SourceFileLvl} from "@ns";
+import {generate, getSourceLevel} from "/generators/libs/part2Base";
 
 type imports = Map<string, string[]>;
 type functions = Set<string>;
 
 export function main(ns: NS): void {
-	ns.write("/generatorResults/part2.js", generate(ns), "w");
+	const generators = [getBitnodeMult, getFormulas];
+	ns.write("/generatorResults/part2.js", generate(ns, generators), "w");
 	const bestScriptChain = [...ns.args] as string[];
 	const nextScript = bestScriptChain.shift();
 	if (nextScript !== undefined) {ns.spawn(nextScript, 1, ...bestScriptChain);}
 }
 
-function getSourceLevel(sourceFiles: SourceFileLvl[], n: SourceFileLvl["n"]): SourceFileLvl["lvl"] {
-	return sourceFiles.find(sourceFile=>sourceFile.n === n)?.lvl ?? 0;
-}
-
-function generate(ns: NS): string {
-	const imports: imports = new Map<string, string[]>();
-	const functions: functions = new Set<string>();
-	const sourceFiles = JSON.parse(ns.read("/generatorResults/part1.txt")) as SourceFileLvl[];
-	getBitnodeMult(ns, imports, functions, sourceFiles);
-	getFormulas(ns, imports, functions, sourceFiles);
-	return stringifyData(imports, functions);
-}
-
-function stringifyData(imports: imports, functions: functions): string {
-	let result = [...imports.entries()].map(([filename, variables]): string=>`import {${variables.join(",")}} from ${filename}\n`).join("");
-	result += [...functions.entries()].join("\n");
-	return result;
-}
-
-// alternative generators
+// alternative
 
 function getBitnodeMult(ns: NS, _imports: imports, functions: functions, sourceFiles: SourceFileLvl[]): void {
 	let funct = "function getBitnodeMult(ns) {\n\treturn ";

@@ -7,6 +7,8 @@ export function main(ns: NS): void {
 	if (nextScript !== undefined) {ns.spawn(nextScript, 1, ...bestScriptChain);}
 }
 
+// alternative
+
 function generate(ns: NS): SourceFileLvl[] {
 	const generated: SourceFileLvl[] = [];
 	// Starting node. extra ram. check not needed

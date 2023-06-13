@@ -1,13 +1,15 @@
 import {NS, SourceFileLvl} from "@ns";
 
 export function main(ns: NS): void {
-	ns.write("/generatorResults/part1.txt", JSON.stringify(generate()), "w");
+	ns.write("/generatorResults/part1.txt", JSON.stringify(generate(ns)), "w");
 	const bestScriptChain = [...ns.args] as string[];
 	const nextScript = bestScriptChain.shift();
 	if (nextScript !== undefined) {ns.spawn(nextScript, 1, ...bestScriptChain);}
 }
 
-function generate(): SourceFileLvl[] {
+// alternative
+
+function generate(_ns: NS): SourceFileLvl[] {
 	const generated: SourceFileLvl[] = [];
 	generated.push({n: 1, lvl: 0});
 	generated.push({n: 2, lvl: 0});
