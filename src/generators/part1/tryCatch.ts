@@ -22,7 +22,7 @@ function generate(ns: NS): SourceFileLvl[] {
 		}
 	})()});
 
-	// Corperations
+	// Corporations
 	generated.push({n: 3, lvl: ((): number=> {
 		// Ram cost of 1024 is too high to check and this alternative has VERY high false negatives.
 		return Number(ns.corporation.hasCorporation());
