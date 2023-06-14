@@ -9,13 +9,14 @@ export function main(ns: NS): void {
 	ns.write("/generatorResults/part2.js", generate(ns, generators), "w");
 	const bestScriptChain = [...ns.args] as string[];
 	const nextScript = bestScriptChain.shift();
+	ns.tprint(`Running ${nextScript?? "DONE"}.`);
 	if (nextScript !== undefined) {ns.spawn(nextScript, 1, ...bestScriptChain);}
 }
 
 // alternative
 
 function getBitnodeMult(ns: NS, _imports: imports, functions: functions, sourceFiles: SourceFileLvl[]): void {
-	let funct = "function getBitnodeMult(ns) {\n\treturn ";
+	let funct = "export function getBitnodeMult(ns) {\n\treturn ";
 	if (getSourceLevel(sourceFiles, 5) >= 1) {
 		funct+=`JSON.parse(${JSON.stringify(ns.getBitNodeMultipliers())})`;
 	} else {
@@ -25,7 +26,7 @@ function getBitnodeMult(ns: NS, _imports: imports, functions: functions, sourceF
 	functions.add(funct);
 }
 function getFormulas(ns: NS, imports: imports, functions: functions, sourceFiles: SourceFileLvl[]): void {
-	let funct = "function getFormulas(ns, bitNodeMults) {\n\treturn ";
+	let funct = "export function getFormulas(ns, bitNodeMults) {\n\treturn ";
 	if (ns.fileExists("formulas.exe") || getSourceLevel(sourceFiles, 5) >= 1) {
 		funct+="ns.formulas";
 	} else {

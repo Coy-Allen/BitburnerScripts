@@ -1,25 +1,4 @@
 import {NS} from "@ns";
-/* bitburner-src/src/Exploits/loops.ts
-function timeCompression(): void {
-	const timer = 1000 * 15;
-	if (Player.exploits.includes(Exploit.TimeCompression)) return;
-	// Time compression
-	let last = performance.now();
-	function minute(): void {
-		const now = performance.now();
-		if (now - last < 500) {
-			// time has been compressed.
-			Player.giveExploit(Exploit.TimeCompression);
-			return;
-		}
-		last = now;
-		window.setTimeout(minute, timer);
-	}
-	window.setTimeout(minute, timer);
-}
-
-*/
-
 /*
 brute force
 was given a hint that said the password is lowercase only. NO caps/numbers/symbols/spaces
@@ -56,12 +35,21 @@ function check(_pass: string): boolean {
 	return false;
 }
 
-export function main(_ns: NS): void {
+export async function main(ns: NS): Promise<void> {
+	ns.disableLog("sleep");
 	let isCorrect;
+	let pass;
+	let i=0;
 	do {
 		next(NUM_ARRAY);
-		isCorrect = check(translate(NUM_ARRAY));
+		pass = translate(NUM_ARRAY);
+		isCorrect = check(pass);
+		if (i%128===0) {await ns.sleep(1);}
+		i++;
 	} while (!isCorrect);
-	console.log(`FOUND PASS ${translate(NUM_ARRAY)}`);
+	const message = `FOUND PASS ${pass} after ${i} tries`;
+	console.log(message);
+	ns.write(message);
+	ns.alert(message);
 }
 

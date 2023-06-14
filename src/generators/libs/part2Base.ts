@@ -28,11 +28,7 @@ export function generate(
 }
 
 function stringifyData(imports: imports, functions: functions): string {
-	let result = [...imports.entries()].map(([filename, variables]): string=>`import {${variables.join(",")}} from ${filename}\n`).join("");
-	result += [...functions.entries()].join("\n");
+	let result = [...imports.entries()].map(([filename, variables]): string=>`import {${variables.join(",")}} from "${filename}"\n`).join("");
+	result += [...functions.values()].join("\n");
 	return result;
 }
-
-const mainStr = `
-
-`;
