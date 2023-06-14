@@ -8,10 +8,16 @@ export class scanning {
 		this.discoveryScan();
 		this.updateAll();
 	}
-	getServer(hostname: string, cached=false): Server {
+	getServer(hostname: string, cached=true): Server {
 		const server = this._servers.get(hostname);
 		if (!cached || server===undefined) {return this.update(hostname);}
 		return server[1];
+	}
+	getServers(cached=true): [string, [string[], Server]][] {
+		if (!cached) {this.updateAll();}
+		const servers = [...this._servers.entries()]
+			.filter(([_name, data]): boolean=>data !== undefined) as [string, [string[], Server]][];
+		return servers;
 	}
 	discoveryScan(): void {
 		this._servers = new Map();

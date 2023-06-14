@@ -1,15 +1,21 @@
 import {NS} from "@ns";
 
-export type requestCommand = ""|"priority"|"getTarget";
-export type requestData = [requestCommand, ...string[]];
+
+export type packetID = number;
+export type nicId = string;
+export type requestTarget = string;
+export type requestCommand = string;
+export type requestArgs = string[];
+
+export type requestData = [requestTarget, requestCommand, requestArgs];
 /** [ IDENTIFIER, PACKET_ID, requestData ] */
-export type request = [string, number, requestData];
+export type request = [nicId, packetID, requestData];
 
 export type responseData = string[];
 /** [ PACKET_ID, responseData ]*/
-export type response = [number, responseData]|undefined;
+export type response = [packetID, responseData]|undefined;
 /** Map< IDENTIFIER, [ PACKET_ID, responseData ] > */
-export type responses = Map<string, response>;
+export type responses = Map<nicId, response>;
 
 export class networking {
 	static requestPort = 2;
@@ -65,7 +71,7 @@ export class networking {
 	}
 	async requestNicRestart(): Promise<void> {
 		this.packetNumber=-1;
-		await this.sendRequest([""]);
+		await this.sendRequest(["networking", "restartNic", []]);
 		this.packetNumber=0;
 	}
 	// Server

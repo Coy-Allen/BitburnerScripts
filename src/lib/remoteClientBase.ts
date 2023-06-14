@@ -16,11 +16,11 @@ export class remoteChildBase {
 		this.nic = new networking(this.ns, this.name);
 	}
 	async start(): Promise<void> {
-		let [target] = await this.nic.request(["getTarget"]);
+		let [target] = await this.nic.request(["hacking", "getTarget", []]);
 		let i=0;
 		while (true) {
 			await this.givenPriorityFunction(this.ns, this.nic, target);
-			if (i%10===0) {[target] = await this.nic.request(["getTarget"]);}
+			if (i%10===0) {[target] = await this.nic.request(["hacking", "getTarget", []]);}
 			i++;
 			i%=1000;
 		}

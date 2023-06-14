@@ -29,7 +29,7 @@ export class autoHack {
 	}
 	/**
 	 * @returns
-	 * a 3 length array showing [already nuked, successfully nuked, unable to nuke]
+	 * Two 3 length array showing [already nuked, successfully nuked, unable to nuke]
 	 */
 	tryAll(servers: Server[], player: Player): Record<"admin"|"backdoor", counters> {
 		const counters: Record<"admin"|"backdoor", counters> = {
