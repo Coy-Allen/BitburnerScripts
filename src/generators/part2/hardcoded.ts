@@ -1,5 +1,6 @@
 import {NS, SourceFileLvl} from "@ns";
-import {generate, getSourceLevel} from "/generators/libs/part2Base";
+import {generate} from "/generators/libs/part2Base";
+import {getSourceLevel} from "/lib/utils";
 
 type imports = Map<string, string[]>;
 type functions = Set<string>;

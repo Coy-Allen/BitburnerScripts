@@ -3,10 +3,6 @@ import {NS, SourceFileLvl} from "@ns";
 type imports = Map<string, string[]>;
 type functions = Set<string>;
 
-export function getSourceLevel(sourceFiles: SourceFileLvl[], n: SourceFileLvl["n"]): SourceFileLvl["lvl"] {
-	return sourceFiles.find(sourceFile=>sourceFile.n === n)?.lvl ?? 0;
-}
-
 export function generate(
 	ns: NS,
 	generators: ((
