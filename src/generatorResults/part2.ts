@@ -1,9 +1,4 @@
 import {BitNodeMultipliers, Formulas, NS} from "@ns";
 
-export function getBitnodeMult(ns: NS): BitNodeMultipliers {
-	return ns.getBitNodeMultipliers();
-}
-
-export function getFormulas(ns: NS, _bitNodeMults: BitNodeMultipliers): Formulas {
-	return ns.formulas;
-}
+export declare function getBitnodeMult(ns: NS): BitNodeMultipliers;
+export declare function getFormulas(ns: NS, bitNodeMults: BitNodeMultipliers): Formulas;

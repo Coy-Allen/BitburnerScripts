@@ -11,5 +11,13 @@ export function main(ns: NS): void {
 // alternative
 
 function generate(ns: NS): SourceFileLvl[] {
-	return ns.singularity.getOwnedSourceFiles();
+	try {
+		return ns.singularity.getOwnedSourceFiles();
+	} catch {
+		// dont own source file 5. run backup script.
+		const alternativeChain = [...ns.args] as string[];
+		alternativeChain.shift();
+		ns.spawn("/generators/part1/tryCatch.js", 1, ...alternativeChain);
+		return [];
+	}
 }

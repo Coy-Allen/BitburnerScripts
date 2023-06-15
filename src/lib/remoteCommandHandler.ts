@@ -1,5 +1,5 @@
 import {NS, Formulas, SourceFileLvl} from "@ns";
-import {masterModule, mainState} from "/lib/CommandHandlerTypes";
+import {masterModule, mainState} from "/lib/masterModules/masterModuleTypes";
 import {networking, request, requestCommand, responseData} from "/lib/networking";
 // required modules
 import {scanning} from "/lib/scanning";

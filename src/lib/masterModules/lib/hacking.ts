@@ -1,10 +1,11 @@
-import {Server} from "@ns";
-import {mainState} from "/lib/CommandHandlerTypes";
+import {Player, Server} from "@ns";
+import {getBestAction, mainState, masterModule} from "/lib/masterModules/masterModuleTypes";
+import {requestArgs, responseData} from "/lib/networking";
 
-export class hackingBase {
-	name: string|undefined;
-	state: mainState|undefined;
-	aquiredTools = {
+export abstract class hackingBase implements masterModule {
+	protected name: string|undefined;
+	protected state: mainState|undefined;
+	protected aquiredTools = {
 		ssh: false,
 		ftp: false,
 		sntp: false,
@@ -15,7 +16,36 @@ export class hackingBase {
 		this.name = name;
 		this.state = state;
 	}
-	checkTools(): boolean {
+	async requestHandler(_from: string, command: string, args: requestArgs): Promise<responseData> {
+		if (this.state === undefined) {return Promise.resolve([]);}
+		const results: string[] = [];
+		const servers = this.state.scanning.getServers();
+		switch (command) {
+		case "all": {
+			for (const [, serverData] of servers) {
+				await this.backdoor(serverData, this.state.player);
+			}
+			break;
+		}
+		default: {
+			const path = this.state.scanning.pathToServer(args[0]);
+			const server = this.state.scanning.getServer(args[0]);
+			await this.backdoor([path, server], this.state.player);
+		}
+		}
+		return Promise.resolve(results);
+	}
+	async getBestAction(): Promise<getBestAction|undefined> {
+		if (this.state === undefined) {return Promise.resolve(undefined);}
+		const servers = this.state.scanning.getServers();
+		for (const [, [, server]] of servers) {
+			// always hack
+			this.openAndNuke(server);
+		}
+		return this.getBestBackdoorAction();
+	}
+	stepRunner(): void {return;} // Not used
+	protected checkTools(): boolean {
 		if (this.state === undefined) {return false;}
 		const countBefore = this.validToolCount();
 		this.aquiredTools.ssh=this.state.ns.fileExists("BruteSSH.exe");
@@ -25,14 +55,14 @@ export class hackingBase {
 		this.aquiredTools.sql=this.state.ns.fileExists("SQLInject.exe");
 		return countBefore !== this.validToolCount();
 	}
-	validToolCount(): number {
+	protected validToolCount(): number {
 		return Object.values(this.aquiredTools).filter(Boolean).length;
 	}
 	/**
 	 * @returns
 	 * -1 on no action required, 0 on success, 1 on failure
 	 */
-	openAndNuke(server: Server): -1|0|1 {
+	protected openAndNuke(server: Server): -1|0|1 {
 		if (this.state === undefined) {return 1;}
 		if (server.hasAdminRights) {return -1;}
 		if (this.validToolCount() < server.numOpenPortsRequired) {return 1;}
@@ -44,4 +74,10 @@ export class hackingBase {
 		this.state.ns.nuke(server.hostname);
 		return 0;
 	}
+	/**
+	 * @returns
+	 * -1 on no action required, 0 on success, 1 on failure
+	 */
+	protected abstract backdoor(serverData: [string[], Server], player: Player): Promise<0 | 1 | -1>;
+	protected abstract getBestBackdoorAction(): Promise<getBestAction|undefined>;
 }

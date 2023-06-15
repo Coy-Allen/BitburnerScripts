@@ -108,7 +108,8 @@ function generate(ns: NS): SourceFileLvl[] {
 	// company salary bonus. check not needed
 	generated.push({n: 11, lvl: 0});
 
-	// start level of neuroflux generator. check not needed
+	// start level of neuroflux generator.
+	// TODO: fixme
 	generated.push({n: 12, lvl: 0});
 
 	// church of machine god

@@ -1,7 +1,11 @@
 import {NS, Formulas, Server, ProcessInfo} from "@ns";
-import {commands} from "/lib/remoteMasterBase";
-import {request, responseData} from "/lib/networking";
-import {scanning} from "./scanning";
+import {request, requestCommand, responseData} from "/lib/networking";
+import {scanning} from "/lib/scanning";
+
+export type commands = Map<
+	requestCommand,
+	((request: request, servers: scanning) => responseData)|undefined
+>;
 
 export class commandHandler {
 	ns: NS;
