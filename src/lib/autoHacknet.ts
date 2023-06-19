@@ -58,9 +58,9 @@ export async function checkHacknetNodes(ns: NS, calc: Formulas): Promise<void> {
 			}
 		} else {
 			switch (targetInfo[1]) {
-			case 0: {hasFailed = !hn.upgradeLevel(targetInfo[0], 1); break;}
-			case 1: {hasFailed = !hn.upgradeRam(targetInfo[0], 1); break;}
-			case 2: {hasFailed = !hn.upgradeCore(targetInfo[0], 1); break;}
+				case 0: {hasFailed = !hn.upgradeLevel(targetInfo[0], 1); break;}
+				case 1: {hasFailed = !hn.upgradeRam(targetInfo[0], 1); break;}
+				case 2: {hasFailed = !hn.upgradeCore(targetInfo[0], 1); break;}
 			}
 		}
 		await ns.sleep(1);

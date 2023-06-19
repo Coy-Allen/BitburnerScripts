@@ -108,7 +108,7 @@ module.exports = {
 		"array-element-newline": ["warn", "consistent"],
 		"eol-last": ["warn"],
 		"function-paren-newline": ["warn", "consistent"],
-		"indent": ["warn", "tab"],
+		"indent": ["warn", "tab", { "SwitchCase": 1 }],
 		"no-multiple-empty-lines": ["warn", { "max": 2, "maxEOF": 1 }],
 		"no-trailing-spaces": ["warn"],
 		"@typescript-eslint/block-spacing": ["warn","never"],

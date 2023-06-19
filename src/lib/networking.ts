@@ -1,18 +1,20 @@
 import {NS} from "@ns";
 
 
-export type packetID = number;
-export type nicId = string;
-export type requestTarget = string;
-export type requestCommand = string;
-export type requestArgs = string[];
+type requestArgs = string[];
+type packetID = number;
+type nicId = string;
+type requestTarget = string;
+type requestCommand = string;
+type errorCode = string;
+type userReadableResult = string;
+type responseResult = string[];
 
 export type requestData = [requestTarget, requestCommand, requestArgs];
-/** [ IDENTIFIER, PACKET_ID, requestData ] */
 export type request = [nicId, packetID, requestData];
 
-export type responseData = string[];
-/** [ PACKET_ID, responseData ]*/
+
+export type responseData = [errorCode, userReadableResult, ...responseResult];
 export type response = [packetID, responseData]|undefined;
 /** Map< IDENTIFIER, [ PACKET_ID, responseData ] > */
 export type responses = Map<nicId, response>;

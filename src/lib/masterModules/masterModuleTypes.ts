@@ -1,10 +1,10 @@
 import {NS, Formulas, Player} from "@ns";
 import {scanning} from "/lib/scanning";
-import {nicId, requestCommand, requestArgs, responseData, networking} from "/lib/networking";
+import {responseData, networking} from "/lib/networking";
 
 export interface getBestAction {
-	command: requestCommand;
-	args: requestArgs;
+	command: string;
+	args: string[];
 	priority: number;
 	metrics: {
 		timeInvestment: number;
@@ -23,7 +23,7 @@ export interface mainState {
 
 export interface masterModule {
 	initalize: (name: string, mainState: mainState) => void;
-	requestHandler: (from: nicId, command: requestCommand, args: requestArgs) => Promise<responseData>;
+	requestHandler: (from: string, command: string, args: string[]) => Promise<responseData>;
 	getBestAction: () => Promise<getBestAction|undefined>;
 	stepRunner: (step: number) => void;
 }

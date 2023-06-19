@@ -1,6 +1,6 @@
 import {Player, Server} from "@ns";
 import {getBestAction, mainState, masterModule} from "/lib/masterModules/masterModuleTypes";
-import {requestArgs, responseData} from "/lib/networking";
+import {responseData} from "/lib/networking";
 
 export abstract class hackingBase implements masterModule {
 	protected name: string|undefined;
@@ -16,22 +16,57 @@ export abstract class hackingBase implements masterModule {
 		this.name = name;
 		this.state = state;
 	}
-	async requestHandler(_from: string, command: string, args: requestArgs): Promise<responseData> {
-		if (this.state === undefined) {return Promise.resolve([]);}
-		const results: string[] = [];
+	async requestHandler(_from: string, command: string, args: string[]): Promise<responseData> {
+		let results: responseData = ["resultUndefined", "Result was returned without assignment."];
+		if (this.state === undefined) {
+			results = ["stateUndefined", "State is not defined at call time."];
+			return Promise.resolve(results);
+		}
 		const servers = this.state.scanning.getServers();
 		switch (command) {
-		case "all": {
-			for (const [, serverData] of servers) {
-				await this.backdoor(serverData, this.state.player);
+			case "backdoor": {
+				switch (args[0]) {
+					case "all": {
+						const backdoorResults: [string, (-1|0|1)][] = [];
+						for (const [serverName, serverData] of servers) {
+							backdoorResults.push([serverName, await this.backdoor(serverData, this.state.player)]);
+						}
+						results = [
+							"allGlob",
+							"Backdoor results: \n"+
+								backdoorResults.map(([hostname, result]): string=>`${hostname}: ${result}`).join("\n"),
+							JSON.stringify(backdoorResults),
+						];
+						break;
+					}
+					default: { // try specific sever
+						try {
+							const path = this.state.scanning.pathToServer(args[0]);
+							const server = this.state.scanning.getServer(args[0]);
+							switch (await this.backdoor([path, server], this.state.player)) {
+								case 0: {
+									results = ["success", `Backdoor successfully ran on "${args[0]}".`, "0"];
+									break;
+								}
+								case 1: {
+									results = ["failure", `Backdoor failed to run on "${args[0]}".`, "1"];
+									break;
+								}
+								case -1: {
+									results = ["success", `Backdoor already installed on "${args[0]}".`, "-1"];
+									break;
+								}
+							}
+						} catch {
+							results = ["serverNotFound", `Could not find server "${args[0]}".`];
+						}
+					}
+				}
+				break;
 			}
-			break;
-		}
-		default: {
-			const path = this.state.scanning.pathToServer(args[0]);
-			const server = this.state.scanning.getServer(args[0]);
-			await this.backdoor([path, server], this.state.player);
-		}
+			default: {
+				results = ["invalidCommand", `Invalid command ${command}.`];
+			}
 		}
 		return Promise.resolve(results);
 	}

@@ -1,9 +1,10 @@
+/*
 import {NS, Formulas, Server, ProcessInfo} from "@ns";
-import {request, requestCommand, responseData} from "/lib/networking";
+import {request, responseData} from "/lib/networking";
 import {scanning} from "/lib/scanning";
 
 export type commands = Map<
-	requestCommand,
+	string,
 	((request: request, servers: scanning) => responseData)|undefined
 >;
 
@@ -80,3 +81,5 @@ export class commandHandler {
 		return rankedTargets[0][1];
 	}
 }
+
+*/
