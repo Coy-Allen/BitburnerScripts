@@ -1,14 +1,33 @@
 import {SourceFileLvl} from "@ns";
 
-export type folderName = string;
-export type fileName = string;
-export type requirementList = SourceFileLvl[];
-export type subTree = Map<fileName, requirementList>;
-export type requirementTree = Map<folderName, subTree>;
-
+type folderName = string;
+type fileName = string;
+type requirementList = SourceFileLvl[];
+interface fileData {
+	requirements: requirementList;
+	priority: number;
+	ramUsage?: number;
+}
+interface folderData {
+	priority: number;
+	files: Map<fileName, fileData>;
+}
+export type requirementTree = Map<folderName, folderData>;
 export const REQUIREMENTS: requirementTree = new Map([
-	["hacking", new Map([
-		["printBackdoors", []],
-	])],
+	["hacking", {
+		priority: 5,
+		files: new Map([
+			["printBackdoors", {
+				priority: 2,
+				requirements: [],
+			}],
+			/*
+			["autoBackdoor", {
+				priority: 1,
+				requirements: [{n: 5, lvl: 1}],
+			}],
+			*/
+		]),
+	}],
 ]);
 
