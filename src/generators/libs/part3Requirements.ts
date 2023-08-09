@@ -21,12 +21,10 @@ export const REQUIREMENTS: requirementTree = new Map([
 				priority: 2,
 				requirements: [],
 			}],
-			/*
-			["autoBackdoor", {
+			["singularity", {
 				priority: 1,
 				requirements: [{n: 5, lvl: 1}],
 			}],
-			*/
 		]),
 	}],
 ]);

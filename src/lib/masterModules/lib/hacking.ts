@@ -64,6 +64,50 @@ export abstract class hackingBase implements masterModule {
 				}
 				break;
 			}
+			case "hack": {
+				switch (args[0]) {
+					case "all": {
+						const nukeResults: [string, (-1|0|1)][] = [];
+						for (const [serverName, [,server]] of servers) {
+							nukeResults.push([serverName, this.openAndNuke(server)]);
+						}
+						results = [
+							"allGlob",
+							"Backdoor results: \n"+
+								nukeResults.map(([hostname, result]): string=>`${hostname}: ${result}`).join("\n"),
+							JSON.stringify(nukeResults),
+						];
+						break;
+					}
+					default: {
+						try {
+							const server = this.state.scanning.getServer(args[0]);
+							switch (this.openAndNuke(server)) {
+								case 0: {
+									results = ["success", `Nuke successfully ran on "${args[0]}".`, "0"];
+									break;
+								}
+								case 1: {
+									results = ["failure", `Nuke failed to run on "${args[0]}".`, "1"];
+									break;
+								}
+								case -1: {
+									results = ["success", `Nuke already installed on "${args[0]}".`, "-1"];
+									break;
+								}
+							}
+						} catch {
+							results = ["serverNotFound", `Could not find server "${args[0]}".`];
+						}
+					}
+				}
+				break;
+			}
+			case "help": {
+				const commands = ["backdoor", "hack", "help"];
+				results = ["success", JSON.stringify(commands), ...commands];
+				break;
+			}
 			default: {
 				results = ["invalidCommand", `Invalid command ${command}.`];
 			}
