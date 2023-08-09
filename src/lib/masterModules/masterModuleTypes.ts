@@ -25,5 +25,4 @@ export interface masterModule {
 	initalize: (name: string, mainState: mainState) => void;
 	requestHandler: (from: string, command: string, args: string[]) => Promise<responseData>;
 	getBestAction: () => Promise<getBestAction|undefined>;
-	stepRunner: (step: number) => void;
 }

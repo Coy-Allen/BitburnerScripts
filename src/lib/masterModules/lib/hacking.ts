@@ -123,7 +123,6 @@ export abstract class hackingBase implements masterModule {
 		}
 		return this.getBestBackdoorAction();
 	}
-	stepRunner(): void {return;} // Not used
 	protected checkTools(): boolean {
 		if (this.state === undefined) {return false;}
 		const countBefore = this.validToolCount();
