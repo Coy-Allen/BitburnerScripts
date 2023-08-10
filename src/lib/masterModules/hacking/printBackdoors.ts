@@ -7,16 +7,16 @@ export class hacking extends hackingBase implements masterModule {
 	 * @returns
 	 * -1 on no action required, 0 on success, 1 on failure
 	 */
-	protected backdoor(serverData: [string[], Server], player: Player): Promise<0|1|-1> {
-		if (this.state === undefined) {return Promise.resolve(1);}
+	protected backdoor(serverData: [string[], Server], player: Player): 0|1|-1 {
+		if (this.state === undefined) {return 1;}
 		const [path, server] = serverData;
-		if (server.backdoorInstalled || server.purchasedByPlayer) {return Promise.resolve(-1);}
-		if (!server.hasAdminRights || server.requiredHackingSkill > player.skills.hacking) {return Promise.resolve(1);}
+		if (server.backdoorInstalled || server.purchasedByPlayer) {return -1;}
+		if (!server.hasAdminRights || server.requiredHackingSkill > player.skills.hacking) {return 1;}
 		this.state.ns.tprintf(path.reverse().map(name=>`connect ${name};`).join("")+"backdoor;");
-		return Promise.resolve(0);
+		return 0;
 	}
-	protected getBestBackdoorAction(): Promise<getBestAction|undefined> {
-		if (this.state === undefined) {return Promise.resolve(undefined);}
+	protected getBestBackdoorAction(): getBestAction|undefined {
+		if (this.state === undefined) {return;}
 		const servers = this.state.scanning.getServers();
 		let targetServer: [string, number] = ["", Number.MAX_SAFE_INTEGER];
 		for (const [, [, server]] of servers) {
@@ -26,15 +26,14 @@ export class hacking extends hackingBase implements masterModule {
 			}
 		}
 		// set to all & no time investment due to just printing to screen
-		return Promise.resolve({
+		return {
 			command: "backdoor",
 			args: ["all"],
-			priority: 0,
 			metrics: {
 				timeInvestment: 0,
-				payout: 0,
+				cost: 0,
 				incomePerSec: 0,
 			},
-		});
+		};
 	}
 }

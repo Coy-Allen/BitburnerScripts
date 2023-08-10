@@ -36,7 +36,7 @@ export class mastermind {
 			targetModule.initalize(targetName, this.state);
 		}
 	}
-	async processAllRequests(_step: number): Promise<void> {
+	processAllRequests(_step: number): void {
 		const requests = this.state.nic.receiveRequests();
 		const currentResponseState = this.state.nic.grabResponseState();
 		for (const nextRequest of requests) {
@@ -48,14 +48,14 @@ export class mastermind {
 				fulfilledRequest = ["moduleNotFound", `The requested module "${requestData[0]}" was not found.`];
 				continue;
 			}
-			fulfilledRequest = await targetModule.requestHandler(fromNicId, requestData[1], requestData[2]);
+			fulfilledRequest = targetModule.requestHandler(fromNicId, requestData[1], requestData[2]);
 			currentResponseState.set(nextRequest[0], [nextRequest[1], fulfilledRequest]);
 		}
 		this.state.nic.writeRawResponses(currentResponseState);
 	}
-	async queueNextAction(_step: number): Promise<void> {
+	queueNextAction(_step: number): void {
 		// TODO: stub
-		return Promise.resolve();
+		return;
 	}
 	async run(ms=100): Promise<void> {
 		let i = 0;
@@ -64,8 +64,8 @@ export class mastermind {
 			await this.state.ns.sleep(ms);
 			this.state.scanning.updateAll();
 			this.state.player = this.state.ns.getPlayer();
-			await this.queueNextAction(i);
-			await this.processAllRequests(i);
+			this.queueNextAction(i);
+			this.processAllRequests(i);
 			i++;
 		}
 	}

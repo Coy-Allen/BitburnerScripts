@@ -16,11 +16,11 @@ export abstract class hackingBase implements masterModule {
 		this.name = name;
 		this.state = state;
 	}
-	async requestHandler(_from: string, command: string, args: string[]): Promise<responseData> {
+	requestHandler(_from: string, command: string, args: string[]): responseData {
 		let results: responseData = ["resultUndefined", "Result was returned without assignment."];
 		if (this.state === undefined) {
 			results = ["stateUndefined", "State is not defined at call time."];
-			return Promise.resolve(results);
+			return results;
 		}
 		const servers = this.state.scanning.getServers();
 		switch (command) {
@@ -29,7 +29,7 @@ export abstract class hackingBase implements masterModule {
 					case "all": {
 						const backdoorResults: [string, (-1|0|1)][] = [];
 						for (const [serverName, serverData] of servers) {
-							backdoorResults.push([serverName, await this.backdoor(serverData, this.state.player)]);
+							backdoorResults.push([serverName, this.backdoor(serverData, this.state.player)]);
 						}
 						results = [
 							"allGlob",
@@ -43,7 +43,7 @@ export abstract class hackingBase implements masterModule {
 						try {
 							const path = this.state.scanning.pathToServer(args[0]);
 							const server = this.state.scanning.getServer(args[0]);
-							switch (await this.backdoor([path, server], this.state.player)) {
+							switch (this.backdoor([path, server], this.state.player)) {
 								case 0: {
 									results = ["success", `Backdoor successfully ran on "${args[0]}".`, "0"];
 									break;
@@ -112,10 +112,10 @@ export abstract class hackingBase implements masterModule {
 				results = ["invalidCommand", `Invalid command ${command}.`];
 			}
 		}
-		return Promise.resolve(results);
+		return results;
 	}
-	async getBestAction(): Promise<getBestAction|undefined> {
-		if (this.state === undefined) {return Promise.resolve(undefined);}
+	getBestAction(): getBestAction|undefined {
+		if (this.state === undefined) {return;}
 		const servers = this.state.scanning.getServers();
 		for (const [, [, server]] of servers) {
 			// always hack
@@ -156,6 +156,6 @@ export abstract class hackingBase implements masterModule {
 	 * @returns
 	 * -1 on no action required, 0 on success, 1 on failure
 	 */
-	protected abstract backdoor(serverData: [string[], Server], player: Player): Promise<0 | 1 | -1>;
-	protected abstract getBestBackdoorAction(): Promise<getBestAction|undefined>;
+	protected abstract backdoor(serverData: [string[], Server], player: Player): 0 | 1 | -1;
+	protected abstract getBestBackdoorAction(): getBestAction|undefined;
 }
