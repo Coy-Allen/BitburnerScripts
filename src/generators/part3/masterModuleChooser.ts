@@ -33,6 +33,8 @@ function generate(ns: NS, sourceFiles: SourceFileLvl[]): string {
 	const maxRam = ns.getServerMaxRam(HOST);
 	// add modules we can use into the choices object
 	for (const [folderName, folder] of REQUIREMENTS) {
+		// libs aren't modules
+		if (folderName === "lib") {continue;}
 		const folderCopy = {
 			priority: folder.priority,
 			files: new Map(),
