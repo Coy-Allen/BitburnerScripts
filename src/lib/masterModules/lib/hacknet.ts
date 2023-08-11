@@ -142,27 +142,16 @@ export class hackingBase implements masterModule {
 			for (let i=this.state.ns.hacknet.numNodes()-1; i>=0; i--) {
 				const node = this.state.ns.hacknet.getNodeStats(i);
 				if (node.level < this.hacknetTarget[1]) {
-					return {
-						command: "buy",
-						args: ["level", i.toString()],
-						metrics: metrics,
-					};
+					return {command: "buy", args: ["level", i.toString()], metrics: metrics};
 				}
 				if (node.ram < this.hacknetTarget[2]) {
-					return {
-						command: "buy",
-						args: ["ram", i.toString()],
-						metrics: metrics,
-					};
+					return {command: "buy", args: ["ram", i.toString()], metrics: metrics};
 				}
 				if (node.cores < this.hacknetTarget[3]) {
-					return {
-						command: "buy",
-						args: ["cores", i.toString()],
-						metrics: metrics,
-					};
+					return {command: "buy", args: ["cores", i.toString()], metrics: metrics};
 				}
 			}
+			this.indexInChain++;
 		}
 	}
 
