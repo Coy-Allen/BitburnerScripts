@@ -30,11 +30,15 @@ export class hacking extends hackingBase implements masterModule {
 				targetServer = [server.hostname, timeToBackdoor];
 			}
 		}
+		// TODO: find async metrics
 		return {
 			command: "backdoor",
 			args: [targetServer[0]],
 			metrics: {
-				timeInvestment: targetServer[1],
+				async: {
+					ram: 0,
+					time: 0,
+				},
 				cost: 0,
 				incomePerSec: 0,
 			},

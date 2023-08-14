@@ -30,7 +30,7 @@ export class hacking extends hackingBase implements masterModule {
 			command: "backdoor",
 			args: ["all"],
 			metrics: {
-				timeInvestment: 0,
+				async: false,
 				cost: 0,
 				incomePerSec: 0,
 			},

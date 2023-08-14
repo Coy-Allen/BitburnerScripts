@@ -3,22 +3,19 @@ import {scanning} from "/lib/scanning";
 import {responseData, networking} from "/lib/networking";
 
 
-/**
- * @property	.command									- test
- * @property	.args											- test
- * @property	.priority									- test
- * @property	.metrics.timeInvestment		- test
- * @property	.metrics.payout						- test
- * @property	.metrics.incomePerSec			- test
- */
 export interface getBestAction {
 	command: string;
 	args: string[];
 	metrics: {
-		timeInvestment: number;
+		async: false | asyncOptions;
 		cost: number;
 		incomePerSec: number;
 	};
+}
+
+export interface asyncOptions {
+	ram: number;
+	time: number;
 }
 
 export interface mainState {

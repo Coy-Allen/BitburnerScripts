@@ -1,12 +1,7 @@
 import {NS, Formulas, SourceFileLvl} from "@ns";
 import {masterModule, mainState} from "/lib/masterModules/masterModuleTypes";
 import {networking, request, responseData} from "/lib/networking";
-// required modules
 import {scanning} from "/lib/scanning";
-// optionals
-// import {autoHack} from "/lib/autoHack";
-// import {scriptManager} from "/lib/scriptManager";
-// import {checkHacknetNodes} from "/lib/autoHacknet";
 
 export type commands = Map<
 	string,

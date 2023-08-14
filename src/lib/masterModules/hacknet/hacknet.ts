@@ -125,8 +125,8 @@ export class hackingBase implements masterModule {
 				return;
 			}
 			const upgradeTarget = this.upgradeChain[this.indexInChain];
-			const metrics = {
-				timeInvestment: 0,
+			const metrics: getBestAction["metrics"] = {
+				async: false,
 				incomePerSec: upgradeTarget.incomePerSec,
 				cost: upgradeTarget.cost,
 			};
