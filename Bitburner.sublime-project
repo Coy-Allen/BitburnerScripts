@@ -12,9 +12,9 @@
 			],
 			"folder_exclude_patterns":
 			[
-				"dist",
-				"build",
-				"node_modules",
+				"//dist/",
+				"//build/",
+				"//node_modules/",
 			],
 			"path": "."
 		}
@@ -27,4 +27,14 @@
 			"cmd": ["powershell.exe", "$project_path/quickBuild.ps1"],
 		}
 	],
+	"settings": {
+		"todoreview": {
+			"exclude_folders": [
+				"*dist*",
+				"*build*",
+				"*node_modules*",
+				"*.git*"
+			]
+		}
+	}
 }
