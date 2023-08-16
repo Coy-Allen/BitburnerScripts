@@ -1,5 +1,6 @@
 import {Player, Server} from "@ns";
-import {getBestAction, mainState, masterModule} from "/lib/masterModules/masterModuleTypes";
+import {bestAction, mainState, masterModule} from "/lib/masterModules/masterModuleTypes";
+import {RESPONSES} from "/lib/masterModules/globalResponses";
 import {responseData} from "/lib/networking";
 
 export abstract class hackingBase implements masterModule {
@@ -17,9 +18,9 @@ export abstract class hackingBase implements masterModule {
 		this.state = state;
 	}
 	requestHandler(_from: string, command: string, args: string[]): responseData {
-		let results: responseData = ["resultUndefined", "Result was returned without assignment."];
+		let results: responseData;
 		if (this.state === undefined) {
-			results = ["stateUndefined", "State is not defined at call time."];
+			results = RESPONSES.stateUndefined;
 			return results;
 		}
 		const servers = this.state.scanning.getServers();
@@ -109,12 +110,12 @@ export abstract class hackingBase implements masterModule {
 				break;
 			}
 			default: {
-				results = ["invalidCommand", `Invalid command ${command}.`];
+				results = RESPONSES.invalidCommand;
 			}
 		}
 		return results;
 	}
-	getBestAction(): getBestAction|undefined {
+	getBestAction(): bestAction|undefined {
 		if (this.state === undefined) {return;}
 		const servers = this.state.scanning.getServers();
 		for (const [, [, server]] of servers) {
@@ -157,5 +158,5 @@ export abstract class hackingBase implements masterModule {
 	 * -1 on no action required, 0 on success, 1 on failure
 	 */
 	protected abstract backdoor(serverData: [string[], Server], player: Player): 0 | 1 | -1;
-	protected abstract getBestBackdoorAction(): getBestAction|undefined;
+	protected abstract getBestBackdoorAction(): bestAction|undefined;
 }

@@ -1,5 +1,6 @@
 import {HacknetNodeConstants} from "@ns";
-import {getBestAction, mainState, masterModule} from "/lib/masterModules/masterModuleTypes";
+import {bestAction, mainState, masterModule} from "/lib/masterModules/masterModuleTypes";
+import {RESPONSES} from "/lib/masterModules/globalResponses";
 import {responseData} from "/lib/networking";
 
 interface upgradeTarget {
@@ -13,7 +14,9 @@ type hacknetTarget = [nodeCount: number, ...upgrades:upgrades];
 type calcResult = [cost: number, gainRate: number];
 type upgradeOption = [name: string, calcResult: calcResult];
 
-export class hackingBase implements masterModule {
+const BUY_SUBCOMMAND = Object.freeze(["node", "fullNode", "level", "ram", "cores"] as const);
+
+export class hacknet implements masterModule {
 	protected name: string|undefined;
 	protected state: mainState|undefined;
 	protected upgradeChain: upgradeTarget[] = [];
@@ -24,17 +27,20 @@ export class hackingBase implements masterModule {
 		this.state = state;
 	}
 	requestHandler(_from: string, command: string, args: string[]): responseData {
-		let results: responseData = ["resultUndefined", "Result was returned without assignment."];
+		let results: responseData;
 		if (this.state === undefined) {
-			results = ["stateUndefined", "State is not defined at call time."];
+			results = RESPONSES.stateUndefined;
 			return results;
 		}
 		switch (command) {
 			case "buy" : {
+				results = RESPONSES.unknownError;
+				const subcommand = args[0];
+				if (!isvalidBuySubcommand(subcommand)) {return RESPONSES.invalidArgs;}
 				// nodeIndex is either the args or overwritten via the new node
 				let nodeIndex = Number(args[1]);
 				// node
-				if (args[0] === "node" || args[0] === "fullNode") {
+				if (subcommand === "node" || subcommand === "fullNode") {
 					nodeIndex = this.state.ns.hacknet.purchaseNode();
 					if (nodeIndex === -1) {
 						results = ["failure", "Couldn't purchase node."];
@@ -48,7 +54,7 @@ export class hackingBase implements masterModule {
 				}
 				const node = this.state.ns.hacknet.getNodeStats(nodeIndex);
 				// level
-				if (args[0] === "level" || args[0] === "fullNode") {
+				if (subcommand === "level" || subcommand === "fullNode") {
 					if (!this.state.ns.hacknet.upgradeLevel(
 						nodeIndex,
 						this.hacknetTarget[1]-node.level,
@@ -59,7 +65,7 @@ export class hackingBase implements masterModule {
 					results = ["success", `Node ${nodeIndex}'s level upgraded.`];
 				}
 				// ram
-				if (args[0] === "ram" || args[0] === "fullNode") {
+				if (subcommand === "ram" || subcommand === "fullNode") {
 					if (!this.state.ns.hacknet.upgradeRam(
 						nodeIndex,
 						Math.log2(this.hacknetTarget[2])-Math.log2(node.ram),
@@ -70,7 +76,7 @@ export class hackingBase implements masterModule {
 					results = ["success", `Node ${nodeIndex}'s ram upgraded.`];
 				}
 				// cores
-				if (args[0] === "cores" || args[0] === "fullNode") {
+				if (subcommand === "cores" || subcommand === "fullNode") {
 					if (!this.state.ns.hacknet.upgradeCore(
 						nodeIndex,
 						this.hacknetTarget[3]-node.cores,
@@ -81,7 +87,7 @@ export class hackingBase implements masterModule {
 					results = ["success", `Node ${nodeIndex}'s cores upgraded.`];
 				}
 				// fix fullNode's results
-				if (args[0] === "fullNode") {
+				if (subcommand === "fullNode") {
 					results = ["success", `Node ${nodeIndex} purchased and upgraded.`];
 				}
 				break;
@@ -108,24 +114,37 @@ export class hackingBase implements masterModule {
 				];
 				break;
 			}
+			case "help": {
+				// TMP: temp help function
+				let commands: string[];
+				if (args.length === 0) {
+					commands = ["buy", "recalculate", "recheck", "help"];
+				} else if (args[0] === "buy") {
+					commands = [...BUY_SUBCOMMAND.values()];
+				} else {
+					commands = ["buy", "recalculate", "recheck", "help"];
+				}
+				results = ["success", JSON.stringify(commands), ...commands];
+				break;
+			}
 			default: {
-				results = ["invalidCommand", `Invalid command ${command}.`];
+				results = RESPONSES.invalidCommand;
 			}
 		}
 		return results;
 	}
-	getBestAction(): getBestAction|undefined {
+	getBestAction(): bestAction|undefined {
 		if (this.state === undefined) {return;}
 		// assumes the hacknet nodes are up to date with upgrade path.
 		//   will give incorrect metrics otherwise
 		// loop until action is found
 		while (true) {
-			// reached end of upgrade chain
+			// reached end of upgrade chain. This is as far as we go
 			if (this.upgradeChain.length === this.indexInChain) {
 				return;
 			}
 			const upgradeTarget = this.upgradeChain[this.indexInChain];
-			const metrics: getBestAction["metrics"] = {
+			const metrics: bestAction["metrics"] = {
 				async: false,
 				incomePerSec: upgradeTarget.incomePerSec,
 				cost: upgradeTarget.cost,
@@ -290,4 +309,12 @@ export class hackingBase implements masterModule {
 			currentGainRate;
 		return [cost*nodeCount, gainRate*nodeCount];
 	}
+}
+
+
+// UTILS
+
+function isvalidBuySubcommand(subcommand: string): subcommand is typeof BUY_SUBCOMMAND[number] {
+	if (BUY_SUBCOMMAND.includes(subcommand as typeof BUY_SUBCOMMAND[number])) {return true;}
+	return false;
 }

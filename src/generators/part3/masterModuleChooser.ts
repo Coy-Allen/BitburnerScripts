@@ -7,14 +7,15 @@ type moduleImports = [
 	fileName: string,
 ][];
 interface fullRamCalculation {
-	maxRam: number;
-	maxRamScript: ramCalculation;
+	ram: number;
+	nextCullTarget: calculationResult;
 	selected: moduleImports;
 }
-interface ramCalculation {
+interface calculationResult {
 	folder: string;
 	file: string;
 	ram: number;
+	priority: number;
 }
 
 const HOST = "home";
@@ -36,21 +37,19 @@ function generate(ns: NS, sourceFiles: SourceFileLvl[]): string {
 		// libs aren't modules
 		if (folderName === "lib") {continue;}
 		const folderCopy = {
-			priority: folder.priority,
 			files: new Map(),
 		};
 		for (const [fileName, file] of folder.files) {
-			if (checkModule(file.requirements, sourceFiles)) {
-				const validModule = {
-					priority: file.priority,
-					requirements: file.requirements, // FIXME: turn reference into deep copy
-					ramUsage: ns.getScriptRam(`/lib/masterModules/${folderName}/${fileName}.js`, HOST),
-				};
-				// never use missing files
-				if (validModule.ramUsage === 0) {continue;}
-				// add valid module
-				folderCopy.files.set(fileName, validModule);
-			}
+			if (!checkModule(file.requirements, sourceFiles)) {continue;}
+			const validModule = {
+				priority: file.priority,
+				requirements: file.requirements, // FIXME: turn reference into deep copy
+				ramUsage: ns.getScriptRam(`/lib/masterModules/${folderName}/${fileName}.js`, HOST),
+			};
+			// never use missing files
+			if (validModule.ramUsage === 0) {continue;}
+			// add valid module
+			folderCopy.files.set(fileName, validModule);
 		}
 		if (folderCopy.files.size !== 0) {
 			choices.set(folderName, folderCopy);
@@ -58,82 +57,74 @@ function generate(ns: NS, sourceFiles: SourceFileLvl[]): string {
 	}
 
 	// get/sort the possible options and make sure RAM usage is within limit
-	const ramResult = calculateFullRam(choices);
-	while (ramResult.maxRam > maxRam) {
-		cullTarget(choices, ramResult.maxRamScript);
-		recalculateFolderRam(choices, ramResult);
+	let calcResult = calculateAll(choices);
+	while (calcResult.ram > maxRam) {
+		cullTarget(choices, calcResult.nextCullTarget);
+		calcResult = calculateAll(choices);
 	}
-	ramResult.selected;
-	// TODO: turn selected into valid output
-	return stringifyData(ramResult.selected);
+	return stringifyData(calcResult.selected);
 }
-function calculateFullRam(
+function calculateAll(
 	choices: requirementTree,
 ): fullRamCalculation {
 	let total = 0;
-	const maxTotalRam: ramCalculation = {
+	const possibleCullTarget: calculationResult = {
 		folder: "",
 		file: "",
 		ram: -1,
+		priority: -1,
 	};
 	const selected: [string, string][] = [];
 	for (const [folderName] of choices) {
-		const maxFolderRam = calculateFolderRam(choices, folderName);
-		if (maxFolderRam.ram > maxTotalRam.ram) {
-			maxTotalRam.folder = maxFolderRam.folder;
-			maxTotalRam.file = maxFolderRam.file;
-			maxTotalRam.ram = maxFolderRam.ram;
+		const folderCalc = calculateFolder(choices, folderName);
+		if (folderCalc === undefined) {
+			choices.delete(folderName);
+			continue;
 		}
-		selected.push([maxFolderRam.folder, maxFolderRam.file]);
-		total += maxFolderRam.ram;
+		if (possibleCullTarget.priority > folderCalc.priority) {
+			possibleCullTarget.folder = folderCalc.folder;
+			possibleCullTarget.file = folderCalc.file;
+			possibleCullTarget.ram = folderCalc.ram;
+			possibleCullTarget.priority = folderCalc.priority;
+		}
+		selected.push([folderCalc.folder, folderCalc.file]);
+		total += folderCalc.ram;
 	}
 	return {
-		maxRam: total,
-		maxRamScript: {
-			folder: maxTotalRam.folder,
-			file: maxTotalRam.file,
-			ram: maxTotalRam.ram,
-		},
+		ram: total,
+		nextCullTarget: possibleCullTarget,
 		selected: selected,
 	};
 }
-function recalculateFolderRam(
-	choices: requirementTree,
-	calculation: fullRamCalculation,
-): void {
-	const folder = choices.get(calculation.maxRamScript.folder);
-	const file = folder?.files.get(calculation.maxRamScript.file);
-	if (file === undefined) {return;}
-	const newCalc = calculateFolderRam(choices, calculation.maxRamScript.folder);
-	calculation.maxRam -= calculation.maxRamScript.ram - newCalc.ram;
-	calculation.maxRamScript = newCalc;
-}
-function calculateFolderRam(
+function calculateFolder(
 	choices: requirementTree,
 	folderName: string,
-): ramCalculation {
-	const maxFolderRam: ramCalculation = {
+): calculationResult|undefined {
+	const calcResult: calculationResult = {
 		folder: "",
 		file: "",
-		ram: -1,
+		ram: 0,
+		priority: -1,
 	};
 	const folder = choices.get(folderName);
-	maxFolderRam.folder = folderName;
-	if (folder === undefined) {return maxFolderRam;}
+	if (folder === undefined) {return;}
+	calcResult.folder = folderName;
 	for (const [fileName, file] of folder.files) {
 		if (file.ramUsage === undefined) {
 			folder.files.delete(fileName);
 			continue;
 		}
-		if (maxFolderRam.ram > file.ramUsage) {continue;}
-		maxFolderRam.file = fileName;
-		maxFolderRam.ram = file.ramUsage;
+		if (calcResult.priority > file.priority) {continue;}
+		calcResult.file = fileName;
+		calcResult.ram = file.ramUsage;
+		calcResult.priority = file.priority;
 	}
-	return maxFolderRam;
+	if (folder.files.size === 0) {return;}
+	return calcResult;
 }
 function cullTarget(
 	choices: requirementTree,
-	target: ramCalculation,
+	target: calculationResult,
 ): void {
 	const folder = choices.get(target.folder);
 	if (folder === undefined) {

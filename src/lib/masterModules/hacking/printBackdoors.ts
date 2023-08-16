@@ -1,6 +1,6 @@
 import {Player, Server} from "@ns";
-import {masterModule, getBestAction} from "/lib/masterModules/masterModuleTypes";
-import {hackingBase} from "lib/masterModules/lib/Hacking";
+import {masterModule, bestAction} from "/lib/masterModules/masterModuleTypes";
+import {hackingBase} from "lib/masterModules/lib/hacking";
 
 export class hacking extends hackingBase implements masterModule {
 	/**
@@ -15,7 +15,7 @@ export class hacking extends hackingBase implements masterModule {
 		this.state.ns.tprintf(path.reverse().map(name=>`connect ${name};`).join("")+"backdoor;");
 		return 0;
 	}
-	protected getBestBackdoorAction(): getBestAction|undefined {
+	protected getBestBackdoorAction(): bestAction|undefined {
 		if (this.state === undefined) {return;}
 		const servers = this.state.scanning.getServers();
 		let targetServer: [string, number] = ["", Number.MAX_SAFE_INTEGER];

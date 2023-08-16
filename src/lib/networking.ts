@@ -14,7 +14,7 @@ export type requestData = [requestTarget, requestCommand, requestArgs];
 export type request = [nicId, packetID, requestData];
 
 
-export type responseData = [errorCode, userReadableResult, ...responseResult];
+export type responseData = readonly [errorCode, userReadableResult, ...responseResult];
 export type response = [packetID, responseData]|undefined;
 /** Map< IDENTIFIER, [ PACKET_ID, responseData ] > */
 export type responses = Map<nicId, response>;
@@ -77,6 +77,10 @@ export class networking {
 		this.packetNumber=0;
 	}
 	// Server
+	clearPorts(): void {
+		this.ns.clearPort(networking.requestPort);
+		this.ns.clearPort(networking.responsePort);
+	}
 	grabResponseState(): responses {
 		const data = this.ns.peek(networking.responsePort).toString();
 		if (data === "NULL PORT DATA") {return new Map();}
