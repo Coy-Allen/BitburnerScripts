@@ -8,3 +8,4 @@ A list of module ideas
 	- Modules:
 		+ logging: log important networking events to console, with watch rules that can be controlled via network.
 		+ help: used in conjunction with the command line nic to help new users with module commands/args
+		+ slaver: used to start, configure, and direct clients to targets.
